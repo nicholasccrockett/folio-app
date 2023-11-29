@@ -10,12 +10,12 @@ import Portal from "./components/Portal.vue";
 <template>
   <div class="funpanel">
     <div class="wrapper">
-      <Portal/>
+      <Portal class="Portal"/>
       <!-- <Program/> -->
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/contacts">Contacts</RouterLink>
+        <RouterLink to="/contact">Contact</RouterLink>
       </nav>
     </div>
   </div>
@@ -69,6 +69,10 @@ nav a:first-of-type {
   border: 0;
 }
 
+.Portal {
+  
+}
+
 @media (min-width: 1024px) {
   .funpanel {
     display: flex;
@@ -80,7 +84,7 @@ nav a:first-of-type {
     margin: 0 2rem 0 0;
   }
 
-  .funpanel .wrapper {
+  .wrapper {
     display: flex;
     place-items: flex-start;
     flex-direction: column;

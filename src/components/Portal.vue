@@ -11,7 +11,8 @@ export default{
     }),
     data: () => ({
         history: new commandListItem("Welcome! Type in 'help' to begin.","",0),
-        command: ""
+        command: "",
+        showTerm: true
     }),
     computed: {
         output() {
@@ -39,6 +40,14 @@ export default{
                 return
             }
             
+            if(this.command.substring(0,this.command.indexOf(' ')) == 'exit' || this.command == 'exit')
+            {
+                this.history = this.history.clear();
+                this.command = ''
+                this.showTerm = false
+                return
+            }
+
             this.history = this.history.addChild(this.command,onSubmitEvent(this.command))
             this.command = "";
         }
@@ -55,16 +64,40 @@ function onSubmitEvent(input:String):string {
 
     switch (commands[0]) {
         case "help":
-            out = listWrap("------------------------------------");
+            out = listWrap("Available commands:");
             out +=listWrap("about\t\tshow my info");
-            out +=listWrap("contacts\tshow my contact information");
+            out +=listWrap("contact\t\tshow my contact information");
             out +=listWrap("help\t\tshow this menu");
-            out += listWrap("------------------------------------");
+            out +=listWrap("nav\t\tnavigate to specified page.Only navigates to links on this page.");
             break;
         case "about":
             out = ''
             break;
         case "nav":
+            if (commands.length < 2) {
+                out = listWrap("Usage: nav target_name")
+                out += listWrap("Options:")
+                out += listWrap("\ttarget_name\t\tNavigate to target")
+                out += listWrap("Available Targets:")
+                out += listWrap("\tabout, home, contact")
+
+                break;
+            }
+            switch (commands[1]){
+                case "home":
+                    router.push('/')
+                    break;
+                case "about":
+                    router.push('/about')
+                    break;
+                case "contact":
+                    router.push('/contact')
+                    break;
+                default:
+                    out = listWrap("parameter " + commands[1] + " not recognized.")
+                    return out;
+                    break;
+            }
             out = ''
             break
         case "":
@@ -73,9 +106,8 @@ function onSubmitEvent(input:String):string {
         case "exit":
             // add later: hide console
             break;
-        case "contacts":
-            out = listWrap("------------------------------------");
-            out += listWrap("Nicholas Crockett")
+        case "contact":
+            out = listWrap("Nicholas Crockett")
             out +=listWrap("phone:\t\t417.268.8817")
             out +=listWrap("email:\t\tnicholasccrockett@gmail.com")
             out +=listWrap("linkedin:\tlinkedin.com/in/nick-crockett")
@@ -159,7 +191,7 @@ class commandListItem {
 </script>
 
 <template>
-    <div class="console" >
+    <div class="console" v-if="showTerm">
         <div class="terminal">
             <div class="terminal-commandline-history"><ul class="history" id="history-list" v-html="output"></ul></div>
             <div class="terminal-commandline"><pre>> <input class="input" type="text" :value="command" @input="update" @keypress.enter="submit"/></pre></div>
@@ -168,6 +200,7 @@ class commandListItem {
 </template>
 
 <style scoped>
+
 
 .console {
     padding: 2px;
@@ -181,6 +214,7 @@ class commandListItem {
     scroll-behavior: auto;
     overflow-x: hidden;
     overflow-y:auto;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .terminal {
@@ -193,6 +227,7 @@ class commandListItem {
     background: none;
     border: none;
     color: #AAA;
+    font-family: inherit;
 }
 
 .terminal-commandline-history ul{
@@ -228,6 +263,7 @@ class commandListItem {
     height: 100%;
     font-size: 1rem;
     font-weight: 100;
+    font-family: inherit;
 }
 
 .terminal-commandline .input {
@@ -239,6 +275,7 @@ class commandListItem {
     font-size: 1rem;
     font-weight: 100;
     padding: 0;
+    font-family: inherit;
 }
 
 h1 {
@@ -258,5 +295,6 @@ h1 {
 
     width: 100%;
     height: 100px;
+    font-family: inherit;
 }
 </style>
