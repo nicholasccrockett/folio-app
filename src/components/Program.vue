@@ -1,11 +1,8 @@
 <script lang="ts">
-import { Terminal } from 'xterm';
-import "../../node_modules/xterm/css/xterm.css" 
 
 export default {
     onMounted() {
         console.log('mounted')
-        const term = new Terminal()
         let container = document.getElementById('terminal-container')!
         term.open(container)
         

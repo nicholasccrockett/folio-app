@@ -1,6 +1,6 @@
 <script lang="ts">
 import router from '@/router'
-import { Terminal } from 'xterm'
+import { RouterLink, RouterView } from "vue-router";
 
 export default{
     props: Object.assign({
@@ -11,8 +11,7 @@ export default{
     }),
     data: () => ({
         history: new commandListItem("Welcome! Type in 'help' to begin.","",0),
-        command: "",
-        term: new Terminal()
+        command: ""
     }),
     computed: {
         output() {
@@ -32,56 +31,65 @@ export default{
             this.command = e.target.value;
             // this.command = ""
         },
-        submit (e: Event) {
-            let out = 'functionality in progress'
-            switch (this.command) {
-                case "help":
-                    out = listWrap("------------------------------------");
-                    out +=listWrap("about\t\tshow my info");
-                    out +=listWrap("contacts\tshow my contact information");
-                    out +=listWrap("help\t\tshow this menu");
-                    out += listWrap("------------------------------------");
-                    break;
-                case "clear":
-                    this.history = this.history.clear();
-                    this.command = ''
-                    out = ''
-                    // return;
-                    break;
-                case "about":
-                    out = ''
-                    break;
-                case "":
-                    out = ''
-                    break;
-                case "exit":
-                    // add later: hide console
-                    break;
-                case "contacts":
-                    out = listWrap("------------------------------------");
-                    out += listWrap("Nicholas Crockett")
-                    out +=listWrap("phone:\t\t417.268.8817")
-                    out +=listWrap("email:\t\tnicholasccrockett@gmail.com")
-                    out +=listWrap("linkedin:\tlinkedin.com/in/nick-crockett")
-                    out +=listWrap("\t")
-                    out +=listWrap("1421 N University Ave")
-                    out +=listWrap("Apt. N332")
-                    out +=listWrap("Little Rock, AR, 72207")
-                    out += listWrap("------------------------------------");
-                    break;
-                default:
-                    out = 'Command not recognized. Type "help" to list available commands.'
-                    break;
+        submit (e: Event) {    
+            if(this.command.substring(0,this.command.indexOf(' ')) == 'clear' || this.command == 'clear')
+            {
+                this.history = this.history.clear();
+                this.command = ''
+                return
             }
-
-
-            this.history = this.history.addChild(this.command,out)
+            
+            this.history = this.history.addChild(this.command,onSubmitEvent(this.command))
             this.command = "";
         }
     }
 }
+
 function listWrap(input:String):string {
     return "<li class=\"item\"><pre>" + input + "</pre></li>"
+}
+
+function onSubmitEvent(input:String):string {
+    let out = 'functionality in progress'
+    let commands = input.split(' ')
+
+    switch (commands[0]) {
+        case "help":
+            out = listWrap("------------------------------------");
+            out +=listWrap("about\t\tshow my info");
+            out +=listWrap("contacts\tshow my contact information");
+            out +=listWrap("help\t\tshow this menu");
+            out += listWrap("------------------------------------");
+            break;
+        case "about":
+            out = ''
+            break;
+        case "nav":
+            out = ''
+            break
+        case "":
+            out = ''
+            break;
+        case "exit":
+            // add later: hide console
+            break;
+        case "contacts":
+            out = listWrap("------------------------------------");
+            out += listWrap("Nicholas Crockett")
+            out +=listWrap("phone:\t\t417.268.8817")
+            out +=listWrap("email:\t\tnicholasccrockett@gmail.com")
+            out +=listWrap("linkedin:\tlinkedin.com/in/nick-crockett")
+            out +=listWrap("\t")
+            out +=listWrap("1421 N University Ave")
+            out +=listWrap("Apt. N332")
+            out +=listWrap("Little Rock, AR, 72207")
+            out += listWrap("------------------------------------");
+            break;
+        default:
+            out = 'Command not recognized. Type "help" to list available commands.'
+            break;
+    }
+    return out
 }
 
 class commandListItem {
