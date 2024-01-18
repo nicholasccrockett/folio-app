@@ -3,6 +3,9 @@ import router from '@/router'
 import { RouterLink, RouterView } from "vue-router";
 
 export default{
+    mounted() {
+        this.emitInterface();
+    },
     props: Object.assign({
         buffer: String,
         background: String,
@@ -12,7 +15,7 @@ export default{
     data: () => ({
         history: new commandListItem("Welcome! Type in 'help' to begin.","",0),
         command: "",
-        showTerm: true
+        termEnabled: true
     }),
     computed: {
         output() {
@@ -44,22 +47,35 @@ export default{
             {
                 this.history = this.history.clear();
                 this.command = ''
-                this.showTerm = false
+                this.termEnabled = false
                 return
             }
 
             this.history = this.history.addChild(this.command,onSubmitEvent(this.command))
             this.command = "";
+        },
+        showTerm () {
+            console.log("Show Terminal command executed.")
+            this.termEnabled = true;
+        },
+        emitInterface() {
+            this.$emit("interface", {
+                showTerm: () => this.showTerm()
+            });
         }
     }
 }
+
+// function enableShowTerm() {
+//     this.termEnabled = true;
+// }
 
 function listWrap(input:String):string {
     return "<li class=\"item\"><pre>" + input + "</pre></li>"
 }
 
 function onSubmitEvent(input:String):string {
-    let out = 'functionality in progress'
+    let out = 'functionality not yet implemented'
     let commands = input.split(' ')
 
     switch (commands[0]) {
@@ -71,7 +87,8 @@ function onSubmitEvent(input:String):string {
             out +=listWrap("nav\t\tnavigate to specified page.Only navigates to links on this page.");
             break;
         case "about":
-            out = ''
+            out = listWrap("Hello! My name is Nicholas Crockett. I live in Kansas City, MO. I currently work remotely for ")
+            out += listWrap("Fast Enterprises as a Technical Team Member. I ")
             break;
         case "nav":
             if (commands.length < 2) {
@@ -112,10 +129,9 @@ function onSubmitEvent(input:String):string {
             out +=listWrap("email:\t\tnicholasccrockett@gmail.com")
             out +=listWrap("linkedin:\tlinkedin.com/in/nick-crockett")
             out +=listWrap("\t")
-            out +=listWrap("1421 N University Ave")
-            out +=listWrap("Apt. N332")
-            out +=listWrap("Little Rock, AR, 72207")
-            out += listWrap("------------------------------------");
+            out +=listWrap("1000 Berkley Pkwy")
+            out +=listWrap("Apt. 418")
+            out +=listWrap("Kansas City, MO, 64120")
             break;
         default:
             out = 'Command not recognized. Type "help" to list available commands.'
@@ -153,7 +169,7 @@ class commandListItem {
     printList():String {
         let rstr:string;
         if (this.command.length>0){
-            rstr = listWrap("> " + this.command) + this.output;
+            rstr = listWrap("<span style=\"color=#color: #2a6bff\">$ </span>" + this.command) + this.output;
         }else {
             rstr = listWrap(this.command) + this.output;
         }
@@ -191,29 +207,28 @@ class commandListItem {
 </script>
 
 <template>
-    <div class="console" v-if="showTerm">
+    <div class="console" v-if="termEnabled">
         <div class="terminal">
             <div class="terminal-commandline-history"><ul class="history" id="history-list" v-html="output"></ul></div>
-            <div class="terminal-commandline"><pre>> <input class="input" type="text" :value="command" @input="update" @keypress.enter="submit"/></pre></div>
+            <div class="terminal-commandline"><pre style="color: #2a6bff;">$ <input class="input" type="text" :value="command" @input="update" @keypress.enter="submit"/></pre></div>
         </div>
     </div>
 </template>
 
 <style scoped>
 
-
 .console {
     padding: 2px;
     min-width: 45vw;
     min-height: 30vh;
     max-width: 90vw;
-    border: #111 solid;
+    border-left: #1f6bf0 solid;
     background-color: #111;
     border-radius: 3px;
-    max-height: 50vh;
+    min-height: 30vh;
     scroll-behavior: auto;
-    overflow-x: hidden;
-    overflow-y:auto;
+    overflow-x: scroll;
+    overflow-y: auto;
     font-family: 'Courier New', Courier, monospace;
 }
 
@@ -236,22 +251,26 @@ class commandListItem {
     padding: 0;
 }
 
-.terminal-commandline-history ul li{
+/* .terminal-commandline-history ul li{
     white-space: normal;
-}
+    color: white;
+} */
 
-.terminal-commandline-history ul li pre{
+
+/* .terminal-commandline-history ul li pre{
     font-size: 1rem;
     font-weight: 100;
     align-content: top;
-}
-
+} */
 .terminal-commandline pre {
     width: 100%;
     font-size: 1rem;
     font-weight: 100;
 }
 
+.terminal-commandline-history li.item {
+    color: #2a6bff
+}
 .terminal-commandline {
     display: flex;
     justify-items: center;
@@ -268,6 +287,7 @@ class commandListItem {
 
 .terminal-commandline .input {
     width: 100%;
+    height: 100%;
     background: none;
     border: none;
     color: #AAA;

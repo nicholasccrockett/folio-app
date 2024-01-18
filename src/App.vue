@@ -4,51 +4,52 @@ import { RouterLink, RouterView } from "vue-router";
 // import HelloWorld from "./components/HelloWorld.vue";
 import Portal from "./components/Portal.vue";
 // import Program from "./components/Program.vue";
+</script>
 
+<script lang='ts'>
+  export default {
+    childInterface: {
+      showTerm: () => {}
+    },
+    methods: {
+      getChildInterface(childInterface) {
+        this.$options.childInterface = childInterface;
+      },
+      showTerm() {
+        console.log('pressed')
+        this.$options.childinterface.showTerm();
+      }
+    }
+  }
 </script>
 
 <template>
   <div class="funpanel">
     <div class="wrapper">
-      <Portal class="Portal"/>
-      <!-- <Program/> -->
+      <Portal class="Portal" @interface="getChildInterface"/>
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <RouterLink to="/contact">Contact</RouterLink>
+        <button class="terminalButton" v-on:Click="showTerm">Terminal</button>
       </nav>
     </div>
+    <line></line>
   </div>
-  <RouterView />
+  <RouterView/>
 </template>
 
 <style scoped>
-
-template {
-  display: flex;
-  
-}
 .funpanel {
   line-height: 1.5;
-  max-height: 99vh;
-  justify-content: center;
-}
-
-footer {
-  max-height: 1vh;
-  justify-self: flex-end;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+  max-height: 98vh;
+  max-width: 98vw;
 }
 
 nav {
-  width: 100%;
+  min-width: 400px;
   font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 nav a.router-link-exact-active {
@@ -59,8 +60,29 @@ nav a.router-link-exact-active:hover {
   background-color: transparent;
 }
 
+nav button {
+  width: 5em;
+  style: none;
+  color: #1f6bf0;
+  border: none;
+  background-color: transparent;
+  font-size: 1rem;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+nav button:hover {
+  style: none;
+  color: #1f6bf0;
+  border: solid 2px;
+  border-color: #0b2656;
+  font-size: 1rem;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+
 nav a {
-  display: inline-block;
   padding: 0 1rem;
   border-left: 1px solid var(--color-border);
 }
@@ -69,26 +91,18 @@ nav a:first-of-type {
   border: 0;
 }
 
-.Portal {
-  
-}
-
-@media (min-width: 1024px) {
+@media (min-width: 1040px ) {
   .funpanel {
     display: flex;
-    place-items: center;
+    justify-content: flex-start;
+    align-items: center;
     padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
   }
 
   .wrapper {
     display: flex;
     place-items: flex-start;
-    flex-direction: column;
-    flex-wrap:nowrap;
+    flex-direction: column-reverse;
   }
 
   nav {
